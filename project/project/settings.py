@@ -27,6 +27,7 @@ SECRET_KEY = 'django-insecure-jjg$s(0#k0d0d%%ker3&m_w44^*z-ji&9!8!3h5*(^4*2i*=^(
 DEBUG = True
 
 ALLOWED_HOSTS = []
+LOGIN_URL = 'http://127.0.0.1:8000/posts/'
 
 
 # Application definition
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.flatpages',
     'fpages',
+    'news',
 
 ]
 

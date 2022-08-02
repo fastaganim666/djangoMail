@@ -1,0 +1,8 @@
+{% extends 'flatpages/default.html' %}
+{% block title %}Посты {% endblock title %}
+{% block content %}
+{% load custom_filters %}
+
+<h1>{{ post.name | censor  }}</h1>
+{{ post.text | censor  }}
+{% endblock content %}

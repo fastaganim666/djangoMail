@@ -1,0 +1,41 @@
+{% extends 'flatpages/default.html' %}
+{% block title %}Посты {% endblock title %}
+{% load custom_filters %}
+{% load custom_tags %}
+{% block content %}
+
+
+<form action="" method="get">
+{{ filterset.form.as_p }}
+<input type="submit" value="Найти" />
+</form>
+
+{% for post in posts %}
+<a href="{{ post.id }}"><h2>{{ post.name | censor }}</h2></a>
+{{ post.text | truncatechars:200 | censor }}
+<br>{{ post.time_add }}
+{% endfor %}
+<br>
+ {% if page_obj.has_previous %}
+       <a href="?page=1">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+            {% if page_obj.paginator.num_pages != 3 %}  ... {% endif %}
+           <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+   {% endif %}
+
+   {{ page_obj.number }}
+
+   {% if page_obj.has_next %}
+     <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+            {% if page_obj.paginator.num_pages != 3 %}  ... {% endif %}
+           <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+   {% endif %}
+
+
+
+
+
+{% endblock content %}
