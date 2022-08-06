@@ -5,6 +5,26 @@ from .forms import PostForm
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.core.mail import send_mail
+from django.shortcuts import render, reverse, redirect
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.core.mail import mail_managers
+from .models import Post
+
+
+def notify_managers_appointment(sender, instance, created, **kwargs):
+    subject = f'{instance.name} {instance.text}'
+
+    mail_managers(
+        subject=instance.name,
+        message=instance.text,
+    )
+
+post_save.connect(notify_managers_appointment, sender=Post)
+
+
 
 
 class PostsList(ListView):
@@ -36,6 +56,26 @@ class PostCreate(PermissionRequiredMixin, CreateView):
     model = Post
     template_name = 'post_edit.html'
     permission_required = ('news.add_post',)
+
+    def post(self, request, *args, **kwargs):
+        post = Post(
+            name=request.POST['name'],
+            text=request.POST['text'],
+            author_id=request.POST['author']
+        )
+        post.save()
+
+        name = request.POST['name']
+        text = request.POST['text']
+        text = text[0:50] + '...'
+        send_mail(
+            subject=f'{name}',
+            message=f'{text}',
+            from_email='fastaganim666@yandex.ru',
+            recipient_list=['fastaganim666@gmail.com']
+        )
+        return redirect('/posts/')
+
 
 
 class PostUpdate(PermissionRequiredMixin, UpdateView):

@@ -39,6 +39,24 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 ACCOUNT_FORMS = {'signup': 'sign.models.BasicSignupForm'}
 
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'fastaganim666'
+EMAIL_HOST_PASSWORD = 'MKXD3(3*W4XdJfJ'  # пароль от почты
+EMAIL_USE_SSL = True
+
+MANAGERS = [
+    ('fastaganim666', 'fastaganim666@gmail.com'),
+]
+
+SERVER_EMAIL = 'fastaganim666@yandex.ru'
+
+# формат даты, которую будет воспринимать наш задачник (вспоминаем модуль по фильтрам)
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+
+APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -57,8 +75,8 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    # ... include the providers you want to enable:
     'allauth.socialaccount.providers.google',
+    "django_apscheduler",
 
 
 ]
