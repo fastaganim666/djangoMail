@@ -7,9 +7,22 @@ class Author(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.IntegerField(default=0)
 
+    def update_rating(self):
+        pass
+
 
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
+    subscribers = models.ManyToManyField(User, through='SubscribersCategory')
+
+    def __str__(self):
+        return f'{self.name}'
+
+
+
+class SubscribersCategory(models.Model):
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 class Post(models.Model):

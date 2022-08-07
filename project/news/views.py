@@ -1,7 +1,7 @@
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Post
+
 from .filters import PostFilter
-from .forms import PostForm
+from .forms import PostForm, SubscribeForm
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -11,7 +11,7 @@ from django.shortcuts import render, reverse, redirect
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.mail import mail_managers
-from .models import Post
+from .models import Post, SubscribersCategory
 
 
 def notify_managers_appointment(sender, instance, created, **kwargs):
@@ -68,13 +68,32 @@ class PostCreate(PermissionRequiredMixin, CreateView):
         name = request.POST['name']
         text = request.POST['text']
         text = text[0:50] + '...'
+        p = Post.objects.filter(type='AT').values('text')
+        p = list(p)
+
         send_mail(
-            subject=f'{name}',
-            message=f'{text}',
+            subject=f'{p} ee',
+            message=f'{p}',
             from_email='fastaganim666@yandex.ru',
             recipient_list=['fastaganim666@gmail.com']
         )
         return redirect('/posts/')
+
+class Subscribe(PermissionRequiredMixin, CreateView):
+    form_class = SubscribeForm
+    model = SubscribersCategory
+    template_name = 'subscribe.html'
+    permission_required = ('news.add_post',)
+
+    def post(self, request, *args, **kwargs):
+        subscribe = SubscribersCategory(
+            category_id=request.POST['category'],
+            user_id=request.user.id,
+        )
+        subscribe.save()
+
+        return redirect('/posts/')
+
 
 
 
