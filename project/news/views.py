@@ -12,6 +12,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.mail import mail_managers
 from .models import Post, SubscribersCategory, PostCategory
+from django.contrib.auth.models import User
 
 
 def notify_managers_appointment(sender, instance, created, **kwargs):
@@ -78,18 +79,28 @@ class PostCreate(PermissionRequiredMixin, CreateView):
         name = request.POST['name']
         text = request.POST['text']
         text = text[0:50] + '...'
-        p = Post.objects.filter(type='AT').values('text')
-        p = list(p)
+
         mails = SubscribersCategory.objects.filter(category_id=cat_id).values('user_id')
         mails = list(mails)
-        print('-------------------')
-        print(mails)
+        user_list = []
+        user_mails = []
+        for mail_id in mails:
+            c = mail_id['user_id']
+            user_list.append(c)
+        user_list = set(user_list)
+        user_list = list(user_list)
+
+        for user_mail in user_list:
+            mail = User.objects.get(id=user_mail)
+            print('****')
+            print(mail.email)
+            user_mails.append(mail.email)
 
         send_mail(
             subject=f'{name}',
             message=f'{text}',
             from_email='fastaganim666@yandex.ru',
-            recipient_list=['fastaganim666@gmail.com']
+            recipient_list=user_mails
         )
         return redirect('/posts/')
 
