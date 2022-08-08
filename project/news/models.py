@@ -6,6 +6,8 @@ from django.urls import reverse
 class Author(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.IntegerField(default=0)
+    def __str__(self):
+        return f' {self.user}'
 
     def update_rating(self):
         pass
@@ -40,7 +42,7 @@ class Post(models.Model):
     text = models.TextField()
     rating = models.IntegerField(default=0)
 
-    many_to_many_relation = models.ManyToManyField(Category, through='PostCategory')
+    categories = models.ManyToManyField(Category, through='PostCategory')
 
     def preview(self):
         return f'{self.text[0:124]}...'
@@ -61,8 +63,8 @@ class Post(models.Model):
 
 
 class PostCategory(models.Model):
-    post = models.ForeignKey(Post, on_delete = models.CASCADE)
-    category = models.ForeignKey(Category, on_delete = models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
 
 class Comment(models.Model):

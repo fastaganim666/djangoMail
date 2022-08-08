@@ -11,7 +11,7 @@ from django.shortcuts import render, reverse, redirect
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.mail import mail_managers
-from .models import Post, SubscribersCategory
+from .models import Post, SubscribersCategory, PostCategory
 
 
 def notify_managers_appointment(sender, instance, created, **kwargs):
@@ -65,15 +65,29 @@ class PostCreate(PermissionRequiredMixin, CreateView):
         )
         post.save()
 
+        cat_id = request.POST['categories']
+        cat = PostCategory(
+            category_id=cat_id,
+            post_id=post.id,
+        )
+        print(request.POST['categories'])
+        print(post.id)
+        cat.save()
+        print(cat)
+
         name = request.POST['name']
         text = request.POST['text']
         text = text[0:50] + '...'
         p = Post.objects.filter(type='AT').values('text')
         p = list(p)
+        mails = SubscribersCategory.objects.filter(category_id=cat_id).values('user_id')
+        mails = list(mails)
+        print('-------------------')
+        print(mails)
 
         send_mail(
-            subject=f'{p} ee',
-            message=f'{p}',
+            subject=f'{name}',
+            message=f'{text}',
             from_email='fastaganim666@yandex.ru',
             recipient_list=['fastaganim666@gmail.com']
         )
